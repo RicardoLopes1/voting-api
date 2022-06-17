@@ -12,6 +12,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @AllArgsConstructor
 @RestController
@@ -23,6 +25,11 @@ public class AssociateController {
   @GetMapping(value = "")
   public ResponseEntity<Page<AssociateDTO>> findAll(Pageable pageable) {
       return ResponseEntity.ok(associateService.findAll(pageable));
+  }
+
+  @PostMapping(value = "")
+  public ResponseEntity<String> save(@RequestBody AssociateDTO associateDto) {
+    return associateService.save(associateDto);
   }
   
 }

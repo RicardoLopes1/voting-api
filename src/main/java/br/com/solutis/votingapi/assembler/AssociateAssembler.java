@@ -19,7 +19,10 @@ public class AssociateAssembler {
   }
 
   public Page<AssociateDTO> toPageDto(Page<Associate> associates) {
-    return associates.map(this::toDto);
-        
+    return associates.map(this::toDto);       
+  }
+
+  public Associate toEntity(AssociateDTO associateDto) {
+    return modelMapper.map(associateDto, Associate.class);
   }
 }
