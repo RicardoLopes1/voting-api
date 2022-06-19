@@ -60,7 +60,7 @@
 
 ### Post - `/associates`
 
-- Send 
+- Send body
 ``` json
 {
     "name": "Associado 100",
@@ -68,6 +68,42 @@
     "email": "associado10@solutis.com.br"
 }
 ```
+
+## Schedule - `/schedules`
+
+### Post
+
+- To create an schedule send:
+``` json
+{
+    "name": "Name of schedule 001",
+    "description": "This description is optional.",
+    "createdBy": "creator name"
+}
+```
+
+
+## Session - `/sessions`
+
+### Post
+For start a new session, send a body with the name of session, schedule id And how long the session will be open (time is optional). If the time is not passed, the default time of 1 minute will be kept:
+``` json
+{
+    "name": "Name of session",
+    "scheduleId": 5,
+    "time": 3
+}
+```
+
+## Voting
+
+| Voting |
+|:--------:|
+|session_id (PK)|
+| schedule_id |
+| associate_id |
+| vote |
+
 
 ## Docker
 
