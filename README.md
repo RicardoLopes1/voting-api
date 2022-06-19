@@ -104,6 +104,16 @@ For start a new session, send a body with the name of session, schedule id And h
 | associate_id |
 | vote |
 
+## VotingAPIResponseEntityObject
+
+- BAD REQUEST response:
+``` json
+{
+    "status": HttpStatus,
+    "message": "Status reason",
+    "object": Object
+}
+```
 
 ## Docker
 
