@@ -18,7 +18,7 @@ public class ScheduleController {
   private final ScheduleService scheduleService;
 
   @PostMapping(value = "")
-  public ResponseEntity<Schedule> save(@RequestBody Schedule schedule) {
+  public ResponseEntity<Object> save(@RequestBody Schedule schedule) {
     return scheduleService.save(schedule);
   }
 }
