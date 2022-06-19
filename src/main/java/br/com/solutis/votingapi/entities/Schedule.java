@@ -1,7 +1,11 @@
 package br.com.solutis.votingapi.entities;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,6 +20,7 @@ public class Schedule {
 
   @Id
   @Column(name = "id")
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(name = "name")
@@ -28,6 +33,6 @@ public class Schedule {
   private String createdBy;
 
   @Column(name = "created_date")
-  private String createdDate;
+  private LocalDateTime createdDate;
 
 }
