@@ -7,7 +7,9 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import br.com.solutis.votingapi.common.DisableSession;
 import br.com.solutis.votingapi.common.VotingAPIResponseEntityObject;
 import br.com.solutis.votingapi.dto.SessionDTOInput;
 import br.com.solutis.votingapi.entities.Schedule;
@@ -22,7 +24,9 @@ public class SessionService {
   
   private final SessionRepository sessionRepository;
   private final ScheduleRepository scheduleRepository;
+  private final DisableSession disableSession;
 
+  @Transactional(readOnly = false)
   public ResponseEntity<Object> startSession(SessionDTOInput sessionDtoIput){
     
     if(sessionDtoIput.getName().isBlank() || sessionDtoIput.getName().isEmpty()) {
@@ -35,7 +39,7 @@ public class SessionService {
         );
     }
 
-    if(sessionDtoIput.getScheduleId() == null){
+    if(sessionDtoIput.getScheduleId() == null) {
       return ResponseEntity.badRequest().body(
         VotingAPIResponseEntityObject.builder()
           .status(HttpStatus.BAD_REQUEST)
@@ -56,12 +60,13 @@ public class SessionService {
         );
     }
 
-    if(sessionRepository.findByScheduleId(schedule.get().getId()).isPresent()) {
+    Optional<Session> sessionOnBd = sessionRepository.findByScheduleId(schedule.get().getId());
+    if(sessionOnBd.isPresent()) {
       return ResponseEntity.badRequest().body(
         VotingAPIResponseEntityObject.builder()
           .status(HttpStatus.BAD_REQUEST)
           .message("Session with Schedule ID " + schedule.get().getId() + " already exists.")
-          .object(sessionDtoIput)
+          .object(sessionOnBd.get())
           .build()
         );
     }
@@ -71,13 +76,17 @@ public class SessionService {
     session.setActive(true);
     LocalDateTime now = LocalDateTime.now();
     session.setStartDate(now);
-    session.setEndDate(now.plusMinutes(
-      sessionDtoIput.getTime() > 0 ? 
+    
+    int incrementMinutes = sessionDtoIput.getTime() > 0 ? 
       sessionDtoIput.getTime() : 
-      sessionDtoIput.getDefaultTime()));
-    session.setSchedule(schedule.get());
+      sessionDtoIput.getDefaultTime();
 
+    session.setEndDate(now.plusMinutes(incrementMinutes));
+    session.setSchedule(schedule.get());
+    
     session = sessionRepository.saveAndFlush(session);
+    
+    disableSession.disable(session.getId(), incrementMinutes);
     
     return ResponseEntity.created(URI.create("/sessions/start")).body(session);
   }
