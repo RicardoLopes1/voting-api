@@ -53,20 +53,20 @@ public class SessionService {
     if(schedule.isEmpty()){
       return ResponseEntity.badRequest().body(
         VotingAPIResponseEntityObject.builder()
-          .status(HttpStatus.BAD_REQUEST)
+          .status(HttpStatus.NOT_FOUND)
           .message("ID Schedule not found.")
           .object(sessionDtoIput)
           .build()
         );
     }
 
-    Optional<Session> sessionOnBd = sessionRepository.findByScheduleId(schedule.get().getId());
-    if(sessionOnBd.isPresent()) {
+    Optional<Session> sessionOnDb = sessionRepository.findByScheduleId(schedule.get().getId());
+    if(sessionOnDb.isPresent()) {
       return ResponseEntity.badRequest().body(
         VotingAPIResponseEntityObject.builder()
           .status(HttpStatus.BAD_REQUEST)
           .message("Session with Schedule ID " + schedule.get().getId() + " already exists.")
-          .object(sessionOnBd.get())
+          .object(sessionOnDb.get())
           .build()
         );
     }
