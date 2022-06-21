@@ -13,7 +13,7 @@
 
 ## Associate
 
-### Get - `/associates?size=12&page=0`
+#### Get - `/associates?size=12&page=0`
 
 - Return 
 ``` json
@@ -85,7 +85,7 @@
 
 ## Session - `/sessions`
 
-### Post
+#### Post
 For start a new session, send a body with the name of session, schedule id And how long the session will be open (time is optional). If the time is not passed, the default time of 1 minute will be kept:
 ``` json
 {
@@ -95,18 +95,31 @@ For start a new session, send a body with the name of session, schedule id And h
 }
 ```
 
-## Voting
+## Voting - `/votes`
 
-| Voting |
+| tb_voting |
 |:--------:|
-|session_id (PK)|
+| id (PK) |
+| session_id |
 | schedule_id |
 | associate_id |
 | vote |
+| vote_date |
+
+#### Put
+For create a vote, send:
+``` json
+{
+    "sessionId": 1,
+    "scheduleId": 1,
+    "associateId": 1,
+    "vote": "sim",
+}
+```
 
 ## VotingAPIResponseEntityObject
 
-- BAD REQUEST response:
+- Request failure response:
 ``` json
 {
     "status": HttpStatus,
@@ -122,7 +135,6 @@ If you use Maven, you can run it with the following command:
 $ docker build -t springio/gs-spring-boot-docker .
 ```
 
-
 If you use Gradle, you can run it with the following command:
 ``` bash
 $ docker build --build-arg JAR_FILE=build/libs/\*.jar -t springio/gs-spring-boot-docker .
@@ -134,3 +146,6 @@ $ docker run -p 8080:8080 springio/gs-spring-boot-docker
 ```
 
 Reference: [https://spring.io/guides/gs/spring-boot-docker/](https://spring.io/guides/gs/spring-boot-docker/)
+
+### Thanks to
+[Solutis Tecnologias LTDA](https://solutis.com.br/)
