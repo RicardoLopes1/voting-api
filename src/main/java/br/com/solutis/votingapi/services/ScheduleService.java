@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.solutis.votingapi.common.VotingAPIResponseEntityObject;
 import br.com.solutis.votingapi.entities.Schedule;
@@ -37,4 +38,17 @@ public class ScheduleService {
 
     return ResponseEntity.created(URI.create("/schedules")).body(schedule);
   }
+
+  @Transactional(readOnly = true)
+  public ResponseEntity<Object> findById(Long scheduleId) {
+    
+    Optional<Schedule> schedule = scheduleRepository.findById(scheduleId);
+
+    if(schedule.isEmpty()) {
+      return ResponseEntity.notFound().build();
+    }
+    
+    return ResponseEntity.ok(schedule.get());
+  }
+  
 }

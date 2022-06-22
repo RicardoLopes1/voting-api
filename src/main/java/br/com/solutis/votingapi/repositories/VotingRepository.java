@@ -1,6 +1,7 @@
 package br.com.solutis.votingapi.repositories;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface VotingRepository extends JpaRepository<Voting, Long> {
   Voting saveVoting(String vote, LocalDateTime voteDate, Long sessionId, Long associateId);
 
   Optional<Voting> findBySessionIdAndAssociateId(Long sessionId, Long associateId);
+
+  List<Voting> findBySessionId(Long sessionId);
 }
