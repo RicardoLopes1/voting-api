@@ -29,6 +29,9 @@ public class Schedule {
   @Column(name = "description")
   private String description;
 
+  @Column(name = "creator_id")
+  private Long creatorId;
+
   @Column(name = "created_by")
   private String createdBy;
 
