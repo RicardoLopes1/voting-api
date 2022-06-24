@@ -46,6 +46,7 @@ public class AssociateControllerTest {
         .content(json)
         .contentType("application/json"))
         .andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.header().string("Location", uri.toString()))
         .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=UTF-8"));
 
     } catch (URISyntaxException e) {
@@ -75,7 +76,7 @@ public class AssociateControllerTest {
   }
 
   @Test
-  public void shouldReturnBadRequestIfAssociateAlreadyExist() {
+  public void shouldReturnBadRequestIfAssociateAlreadyExists() {
     try {
       URI uri = new URI("/associates");
       String json = "{\"name\":\"Teste\",\"cpf\":\"12345687901\",\"email\":\"emaildeteste@solutis.com.br\"}";
