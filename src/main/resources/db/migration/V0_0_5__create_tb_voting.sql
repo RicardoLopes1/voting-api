@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS tb_voting (
   session_id INTEGER,
   schedule_id INTEGER,
   associate_id INTEGER,
-  vote varchar(5),
-  vote_date DATETIME,
+  vote varchar(3),
+  vote_date TIMESTAMP,
   
   foreign key (session_id) references tb_session(id),
  
