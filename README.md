@@ -2,6 +2,8 @@
 
 This aplication was created in a training to Software Developer Back-End with Java/Spring.
 
+> **To access swagger documentation, run appication and access: `http://localhost:8080/swagger-ui.html`**
+
 ## Project Dependencies
 - Spring Data JPA
 - Spring Web
@@ -13,6 +15,8 @@ This aplication was created in a training to Software Developer Back-End with Ja
 - ModelMapper
 - Flyway | version control for database
 - (*Plugin*) JaCoCo Maven | Cover Coverage
+- Springfox Swagger2
+- Springfox Swagger UI
 
 ## Associate `/associates`
 
