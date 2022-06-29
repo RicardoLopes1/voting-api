@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.solutis.votingapi.entities.Schedule;
+import br.com.solutis.votingapi.dto.ScheduleDTOInput;
 import br.com.solutis.votingapi.services.ScheduleService;
 import lombok.AllArgsConstructor;
 
@@ -20,8 +20,8 @@ public class ScheduleController {
   private final ScheduleService scheduleService;
 
   @PostMapping(value = "")
-  public ResponseEntity<Object> save(@RequestBody Schedule schedule) {
-    return scheduleService.save(schedule);
+  public ResponseEntity<Object> save(@RequestBody ScheduleDTOInput scheduleDtoInput) {
+    return scheduleService.save(scheduleDtoInput);
   }
 
   @GetMapping(value = "/{scheduleId}")

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.solutis.votingapi.common.VotingAPIResponseEntityObject;
+import br.com.solutis.votingapi.dto.ScheduleDTOInput;
 import br.com.solutis.votingapi.entities.Schedule;
 import br.com.solutis.votingapi.repositories.ScheduleRepository;
 import lombok.AllArgsConstructor;
@@ -20,9 +21,9 @@ public class ScheduleService {
   
   private final ScheduleRepository scheduleRepository;
 
-  public ResponseEntity<Object> save(Schedule schedule) {
+  public ResponseEntity<Object> save(ScheduleDTOInput scheduleDtoInput) {
     
-    Optional<Schedule> scheduleRequested = scheduleRepository.findByName(schedule.getName());
+    Optional<Schedule> scheduleRequested = scheduleRepository.findByName(scheduleDtoInput.getName());
     if (scheduleRequested.isPresent()) {
       return ResponseEntity.badRequest().body(
         VotingAPIResponseEntityObject.builder()
@@ -33,6 +34,11 @@ public class ScheduleService {
         );
     }
 
+    Schedule schedule = new Schedule();
+    schedule.setName(scheduleDtoInput.getName());
+    schedule.setDescription(scheduleDtoInput.getDescription());
+    schedule.setCreatorId(scheduleDtoInput.getCreatorId());
+    schedule.setCreatedBy(scheduleDtoInput.getCreatedBy());
     schedule.setCreatedDate(LocalDateTime.now());
     schedule = scheduleRepository.saveAndFlush(schedule);
 
