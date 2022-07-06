@@ -2,7 +2,12 @@
 
 This aplication was created in a training to Software Developer Back-End with Java/Spring.
 
-> **To access swagger documentation, run appication and access: `http://localhost:8080/swagger-ui.html`**
+> **Documentation to upload app in cloud. [Container Registry & Runtime (Docker Deploys)](https://devcenter.heroku.com/articles/container-registry-and-runtime)**
+
+> **App on-line `https://solutis-voting-api.herokuapp.com/`**
+
+> **To access swagger documentation, run appication and access: `http://localhost:8080/swagger-ui.html` or access on-line: `https://solutis-voting-api.herokuapp.com/swagger-ui.html`**
+
 
 ## Project Dependencies
 - Spring Data JPA

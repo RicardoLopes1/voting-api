@@ -6,7 +6,7 @@ ADD ./pom.xml pom.xml
 ADD ./src src/
 
 # package jar
-RUN mvn clean package -Dspring.profiles.active=prod -DskipTests
+RUN mvn clean package -DskipTests
 
 #
 # Second stage: minimal runtime environment
