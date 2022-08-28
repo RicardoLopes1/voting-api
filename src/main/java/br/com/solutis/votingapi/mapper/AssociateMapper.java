@@ -1,4 +1,4 @@
-package br.com.solutis.votingapi.assembler;
+package br.com.solutis.votingapi.mapper;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 
 @Component
 @AllArgsConstructor
-public class AssociateAssembler {
+public class AssociateMapper {
   
   private final ModelMapper modelMapper;
 
