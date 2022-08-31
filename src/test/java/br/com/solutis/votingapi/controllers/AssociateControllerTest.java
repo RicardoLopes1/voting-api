@@ -1,9 +1,7 @@
 package br.com.solutis.votingapi.controllers;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.h2.mvstore.Page;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -12,86 +10,93 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.solutis.votingapi.dto.AssociateDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class AssociateControllerTest {
   
+  private AssociateDTO associateDto;
+  private static String PATH_ASSOCIATES = "/associates";
+
   @Autowired
   private MockMvc postman;
 
-  @Test
-  public void shouldReturnStatusOKForURIAssociates() {
-    try {
-      URI uri = new URI("/associates?page=0&size=12");
-      postman.perform(MockMvcRequestBuilders.get(uri))
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(Page.class);
+  @Autowired
+  private ObjectMapper mapper;
 
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  @BeforeEach
+  public void setUp() {
+    associateDto = AssociateDTO.builder()
+        .name("Ricardo")
+        .cpf("521.532.120-57")
+        .email("a@email.com.br")
+        .build();      
   }
 
   @Test
-  public void shouldReturnTheCreatedAssociateAndStatusCreatedForURIAssociates() {
-    try {
-      URI uri = new URI("/associates");
-      String json = "{\"name\":\"Teste\",\"cpf\":\"12345678999\",\"email\":\"emaildeteste@solutis.com.br\"}";
-
-      postman.perform(MockMvcRequestBuilders.post(uri)
-        .content(json)
-        .contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.header().string("Location", uri.toString()))
-        .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=UTF-8"));
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  public void shouldReturnStatusOKForURIAssociates() throws Exception {
+    // Arrange
+    String uri = PATH_ASSOCIATES + "?page=0&size=12";
+    
+    // Assert
+    postman.perform(MockMvcRequestBuilders.get(uri))
+      .andExpect(MockMvcResultMatchers.status().isOk())
+      .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
+      .getClass().isAssignableFrom(Page.class);
   }
 
   @Test
-  public void shouldReturnBadRequestForURIAssociatesIfCpfIsNotValid() {
-    try {
-      URI uri = new URI("/associates");
-      String json = "{\"name\":\"Teste\",\"cpf\":\"12345678\",\"email\":\"emaildeteste@solutis.com.br\"}";
+  public void shouldReturnTheCreatedAssociateAndStatusCreatedForURIAssociates() throws Exception {
+    
+    // Arrange
+    String uri = PATH_ASSOCIATES;
+    String json = mapper.writeValueAsString(associateDto);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
-        .content(json)
-        .contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=UTF-8"));
-        
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
+      .content(json)
+      .contentType("application/json"))
+      .andExpect(MockMvcResultMatchers.status().isCreated())
+      .andExpect(MockMvcResultMatchers.header().string("Location", uri))
+      .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=UTF-8"));
   }
 
   @Test
-  public void shouldReturnBadRequestIfAssociateAlreadyExists() {
-    try {
-      URI uri = new URI("/associates");
-      String json = "{\"name\":\"Teste\",\"cpf\":\"12345687901\",\"email\":\"emaildeteste@solutis.com.br\"}";
+  public void shouldReturnBadRequestForURIAssociatesIfCpfIsNotValid() throws Exception {
+    
+    // Arrange
+    String uri = PATH_ASSOCIATES;
+    associateDto.setCpf("123.456.789-11");
+    String json = mapper.writeValueAsString(associateDto);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
-        .content(json)
-        .contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("text/plain;charset=UTF-8"));
-        
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
+      .content(json)
+      .contentType("application/json"))
+      .andExpect(MockMvcResultMatchers.status().isBadRequest());
+  }
+
+  @Test
+  public void shouldReturnBadRequestIfAssociateAlreadyExists() throws Exception {
+    
+    // Arrange
+    AssociateDTO associateDtoExists = AssociateDTO.builder()
+      .name("Ricardo")
+      .cpf("123.456.879-01")
+      .email("a@email.com.br")
+      .build();
+
+    String uri = PATH_ASSOCIATES;
+    String json = mapper.writeValueAsString(associateDtoExists);
+
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
+      .content(json)
+      .contentType("application/json"))
+      .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
 }
