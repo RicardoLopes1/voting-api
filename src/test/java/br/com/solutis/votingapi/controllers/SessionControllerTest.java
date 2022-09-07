@@ -1,8 +1,6 @@
 package br.com.solutis.votingapi.controllers;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,156 +9,129 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import br.com.solutis.votingapi.common.VotingAPIResponseEntityObject;
-import br.com.solutis.votingapi.entities.Session;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.solutis.votingapi.dto.SessionDTOInput;
+import br.com.solutis.votingapi.dto.SessionDTOOutput;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class SessionControllerTest {
-  
+class SessionControllerTest {
+
+  private SessionDTOInput sessionDTOInput;
+
   @Autowired
   private MockMvc postman;
 
-  @Test
-  public void shouldReturnStatusCreatedAndASession() {
-    try {
-      URI uri = new URI("/sessions/start");
-      String json = "{\"name\":\"session test 6\",\"scheduleId\":6,\"time\": 6}";
+  @Autowired
+  private ObjectMapper objectMapper;
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+  @BeforeEach
+  public void setUp() {
+    sessionDTOInput = new SessionDTOInput("session test 6", 6L, 1, 6);      
+  }
+
+  @Test
+  void shouldReturnStatusCreatedAndASession() throws Exception {
+    // Arrange
+    String uri = "/sessions/start";
+    String json = objectMapper.writeValueAsString(sessionDTOInput);
+
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.header().string("Location", uri.toString()))
-        .getClass().isAssignableFrom(Session.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.header().string("Location", uri))
+        .getClass().isAssignableFrom(SessionDTOOutput.class);
   }
 
   @Test
-  public void shouldReturnStatusCreatedAndASessionWithDefaulEndTime() {
-    try {
-      URI uri = new URI("/sessions/start");
-      String json = "{\"name\":\"session test 7\",\"scheduleId\":7,\"time\":0}";
+  void shouldReturnStatusCreatedAndASessionWithDefaulEndTime() throws Exception {
+    // Arrange
+    String uri = "/sessions/start";
+    sessionDTOInput.setScheduleId(7L);
+    sessionDTOInput.setTime(0);
+    String json = objectMapper.writeValueAsString(sessionDTOInput);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.header().string("Location", uri.toString()))
-        .getClass().isAssignableFrom(Session.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.header().string("Location", uri))
+        .getClass().isAssignableFrom(SessionDTOOutput.class);
   }
 
   @Test
-  public void shouldReturnStatusBadRequestIfNameOfSessionIsBlank() {
-    try {
-      URI uri = new URI("/sessions/start");
-      String json = "{\"name\":\"   \",\"scheduleId\":8,\"time\": 8}";
+  void shouldReturnStatusBadRequestIfNameOfSessionIsBlank() throws Exception {
+    // Arrange
+    String uri = "/sessions/start";
+    sessionDTOInput.setName("  ");
+    String json = objectMapper.writeValueAsString(sessionDTOInput);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(VotingAPIResponseEntityObject.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
   @Test
-  public void shouldReturnStatusBadRequestIfNameOfSessionIsEmpty() {
-    try {
-      URI uri = new URI("/sessions/start");
-      String json = "{\"name\":\"\",\"scheduleId\":8,\"time\": 8}";
+  void shouldReturnStatusBadRequestIfNameOfSessionIsEmpty() throws Exception {
+    // Arrange
+    String uri = "/sessions/start";
+    sessionDTOInput.setName("");
+    String json = objectMapper.writeValueAsString(sessionDTOInput);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(VotingAPIResponseEntityObject.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
   @Test
-  public void shouldReturnStatusBadRequestIfScheduleIdIsNull() {
-    try {
-      URI uri = new URI("/sessions/start");
-      String json = "{\"name\":\"Name of session 8\",\"scheduleId\":null,\"time\": 8}";
+  void shouldReturnStatusBadRequestIfScheduleIdIsNull() throws Exception {
+    // Arrange
+    String uri = "/sessions/start";
+    sessionDTOInput.setScheduleId(null);
+    String json = objectMapper.writeValueAsString(sessionDTOInput);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(VotingAPIResponseEntityObject.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
   @Test
-  public void shouldReturnStatusBadRequestIfScheduleNotExistsInDatabase() {
-    try {
-      URI uri = new URI("/sessions/start");
-      String json = "{\"name\":\"Name of session\",\"scheduleId\":100000,\"time\": 5}";
+  void shouldReturnStatusNotFoundIfScheduleNotExistsInDatabase() throws Exception {
+    // Arrange
+    String uri = "/sessions/start";
+    sessionDTOInput.setScheduleId(9999L);
+    String json = objectMapper.writeValueAsString(sessionDTOInput);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(VotingAPIResponseEntityObject.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 
   @Test
-  public void shouldReturnStatusBadRequestIfSessionAlreadyExistsWithSchedule() {
-    try {
-      URI uri = new URI("/sessions/start");
-      String json = "{\"name\":\"Name of session teste 01\",\"scheduleId\":1,\"time\": 2}";
-      
-      postman.perform(MockMvcRequestBuilders.post(uri)
+  void shouldReturnStatusBadRequestIfSessionAlreadyExistsWithSchedule() throws Exception {
+    // Arrange
+    String uri = "/sessions/start";
+    sessionDTOInput.setScheduleId(1L);
+    String json = objectMapper.writeValueAsString(sessionDTOInput);
+
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(VotingAPIResponseEntityObject.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
 }
