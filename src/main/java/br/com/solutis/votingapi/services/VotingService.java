@@ -30,7 +30,7 @@ public class VotingService {
   public ResponseEntity<Object> save(VotingDTOInput votingDtoInput) {
     
     Optional<Session> session = sessionRepository.findById(votingDtoInput.getSessionId());
-    if(session.isEmpty() || session.get().isActive() == false) {
+    if(session.isEmpty() || !session.get().isActive()) {
       return ResponseEntity.badRequest().body(
         VotingAPIResponseEntityObject.builder()
           .status(HttpStatus.BAD_REQUEST)

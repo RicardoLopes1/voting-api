@@ -1,8 +1,6 @@
 package br.com.solutis.votingapi.controllers;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -11,87 +9,84 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import br.com.solutis.votingapi.common.VotingAPIResponseEntityObject;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import br.com.solutis.votingapi.dto.ScheduleDTOInput;
+import br.com.solutis.votingapi.dto.ScheduleDTOOutput;
 import br.com.solutis.votingapi.entities.Schedule;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ScheduleControllerTest {
-  
+class ScheduleControllerTest {
+
+  private ScheduleDTOInput scheduleDTOInput;
+
   @Autowired
   private MockMvc postman;
 
-  @Test
-  public void shouldReturnStatusCreatedWhenSendASchedule() {
-    try {
-      URI uri = new URI("/schedules");
-      String json = "{\"name\":\"schedule 100\",\"description\":\"schedule 100 description\",\"creatorId\": 1, \"createdBy\":\"Creator 100\"}";
+  @Autowired
+  private ObjectMapper objectMapper;
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+  @BeforeEach
+  public void setUp() {
+    scheduleDTOInput = ScheduleDTOInput.builder()
+        .name("Schedule 100")
+        .description("Schedule 100 description")
+        .creatorId(1L)
+        .createdBy("Creator 100")
+        .build();
+  }
+
+  @Test
+  void shouldReturnStatusCreatedWhenSendASchedule() throws Exception {
+    // Arrange
+    String uri = "/schedules";
+    String json = objectMapper.writeValueAsString(scheduleDTOInput);
+
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .andExpect(MockMvcResultMatchers.header().string("Location", uri.toString()))
+        .andExpect(MockMvcResultMatchers.header().string("Location", uri))
         .getClass().isAssignableFrom(Schedule.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
   }
 
   @Test
-  public void shouldReturnStatusBadRequestIfScheduleAlreadyExists() {
-    try {
-      URI uri = new URI("/schedules");
-      String json = "{\"name\":\"schedule 001\",\"description\":\"schedule 100 description\", \"creatorId\": 1, \"createdBy\":\"Creator 001\"}";
+  void shouldReturnStatusBadRequestIfScheduleAlreadyExists() throws Exception {
+    // Arrange
+    String uri = "/schedules";
+    scheduleDTOInput.setName("schedule 001");
+    String json = objectMapper.writeValueAsString(scheduleDTOInput);
 
-      postman.perform(MockMvcRequestBuilders.post(uri)
+    // Assert
+    postman.perform(MockMvcRequestBuilders.post(uri)
         .contentType("application/json")
         .content(json))
-        .andExpect(MockMvcResultMatchers.status().isBadRequest())
-        .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(VotingAPIResponseEntityObject.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    } 
+        .andExpect(MockMvcResultMatchers.status().isBadRequest());
   }
 
   @Test
-  public void shoudReturnScheduleById() {
-    try {
-      URI uri = new URI("/schedules/1");
+  void shoudReturnScheduleById() throws Exception {
+    // Arrange
+    String uri = "/schedules/1";
 
-      postman.perform(MockMvcRequestBuilders.get(uri))
+    // Assert
+    postman.perform(MockMvcRequestBuilders.get(uri))
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.content().contentType("application/json"))
-        .getClass().isAssignableFrom(Schedule.class);
-
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+        .getClass().isAssignableFrom(ScheduleDTOOutput.class);
   }
 
   @Test
-  public void shoudNotReturnScheduleByIdIfScheduleNotExist() {
-    try {
-      URI uri = new URI("/schedules/1000");
+  void shoudNotReturnScheduleByIdIfScheduleNotExist() throws Exception {
+    // Arrange
+    String uri = "/schedules/1000";
 
-      postman.perform(MockMvcRequestBuilders.get(uri))
+    // Assert
+    postman.perform(MockMvcRequestBuilders.get(uri))
         .andExpect(MockMvcResultMatchers.status().isNotFound());
-        
-    } catch (URISyntaxException e) {
-      e.printStackTrace();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
   }
 
 }
