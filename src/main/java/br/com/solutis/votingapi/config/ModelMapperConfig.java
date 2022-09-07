@@ -1,4 +1,4 @@
-package br.com.solutis.votingapi.common;
+package br.com.solutis.votingapi.config;
 
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -18,14 +18,12 @@ public class ModelMapperConfig {
     /* CPF formater - Associate */
     Converter<String, String> addCharactersInCpfConverter = context -> {
       var cpf = context.getSource();
-      var cpfWithCharacters = cpf.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
-      return cpfWithCharacters;
+      return cpf.replaceAll("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4");
     };
 
     Converter<String, String> removeCharactersInCpfConverter = context -> {
       var cpf = context.getSource();
-      var cpfWithoutCharacters = cpf.replaceAll("\\D", "");
-      return cpfWithoutCharacters;
+      return cpf.replaceAll("\\D", "");
     };
     
     modelMapper.createTypeMap(Associate.class, AssociateDTO.class)
